@@ -1,5 +1,5 @@
-var GIPHY_API_URL = 'https://api.giphy.com/';
-var GIPHY_PUB_KEY = '3xV3sWmEl2phXFsqVKeKnuRDAihSHMOJ';
+// var GIPHY_API_URL = 'https://api.giphy.com/';
+// var GIPHY_PUB_KEY = '3xV3sWmEl2phXFsqVKeKnuRDAihSHMOJ';
 
 App = React.createClass({
     handleSearch: function(searchingText) {
