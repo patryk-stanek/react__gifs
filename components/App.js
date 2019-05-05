@@ -1,5 +1,5 @@
-var GIPHY_API_URL = 'https://api.giphy.com';
-var GIPHY_PUB_KEY = '3xV3sWmEl2phXFsqVKeKnuRDAihSHMOJ';
+const GIPHY_API_URL = 'https://api.giphy.com';
+const GIPHY_PUB_KEY = '3xV3sWmEl2phXFsqVKeKnuRDAihSHMOJ';
 
 App = React.createClass({
 
@@ -24,21 +24,41 @@ App = React.createClass({
         }.bind(this));
     },
 
-    getGif: function(searchingText, callback) {
-        var url = GIPHY_API_URL + '/v1/gifs/random?api_key=' + GIPHY_PUB_KEY + '&tag=' + searchingText;
-        var xhr = new XMLHttpRequest();
-        xhr.open('GET', url);
-        xhr.onload = function() {
-            if (xhr.status === 200) {
-            var data = JSON.parse(xhr.responseText).data;
-                var gif = {
-                    url: data.fixed_width_downsampled_url,
-                    sourceUrl: data.url
+    // getGif: function(searchingText, callback) {
+    //     var url = GIPHY_API_URL + '/v1/gifs/random?api_key=' + GIPHY_PUB_KEY + '&tag=' + searchingText;
+    //     var xhr = new XMLHttpRequest();
+    //     xhr.open('GET', url);
+    //     xhr.onload = function() {
+    //         if (xhr.status === 200) {
+    //         var data = JSON.parse(xhr.responseText).data;
+    //             var gif = {
+    //                 url: data.fixed_width_downsampled_url,
+    //                 sourceUrl: data.url
+    //             };
+    //             callback(gif);
+    //         }
+    //     };
+    //     xhr.send();
+    // },
+
+    getGif: function(searchingText) {
+        return new Promise(
+            function(resolve, reject) {
+                let url = GIPHY_API_URL + '/v1/gifs/random?api_key=' + GIPHY_PUB_KEY + '&tag=' + searchingText;
+                const xhr = new XMLHttpRequest();
+
+                xhr.onload = function() {
+                    if (this.status === 200) {
+                        resolve(this.response);
+                    } else {
+                        reject(new Error(this.statusText));
+                    }
                 };
-                callback(gif);
+
+                xhr.open('GET', url);
+                xhr.send();
             }
-        };
-        xhr.send();
+        )
     },
 
     render: function() {
