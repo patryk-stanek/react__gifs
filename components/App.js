@@ -11,17 +11,45 @@ App = React.createClass({
         };
     },
 
+    // handleSearch: function(searchingText) {
+    //     this.setState({
+    //         loading: true
+    //     });
+    //     this.getGif(searchingText, function(gif) {
+    //         this.setState({
+    //             loading: false,
+    //             gif: gif,
+    //             searchingText: searchingText
+    //         });
+    //     }.bind(this));
+    // },
+
     handleSearch: function(searchingText) {
         this.setState({
             loading: true
         });
-        this.getGif(searchingText, function(gif) {
-            this.setState({
-                loading: false,
-                gif: gif,
-                searchingText: searchingText
-            });
-        }.bind(this));
+        this.getGif(searchingText)
+            .then(function (response) {
+                return response.json();
+                // return response.data
+                // response => response.json();
+            })
+            .then(function(myJson) {
+                const data = myJson.data;
+                // const data = response.sourceURL;    
+                const gif = {
+                    gif: data
+                }
+                return gif;
+            })
+            .then(gif => {
+                this.setState({
+                    loading: false,
+                    gif: gif,
+                    searchingText: searchingText
+                });
+                return;
+            })
     },
 
     // getGif: function(searchingText, callback) {
@@ -46,16 +74,20 @@ App = React.createClass({
             function(resolve, reject) {
                 let url = GIPHY_API_URL + '/v1/gifs/random?api_key=' + GIPHY_PUB_KEY + '&tag=' + searchingText;
                 const xhr = new XMLHttpRequest();
-
+                xhr.open('GET', url);
                 xhr.onload = function() {
                     if (this.status === 200) {
-                        resolve(this.response);
+                        const data = JSON.parse(xhr.responseText).data;
+                        const gif = {
+                            url: data.fixed_width_downsampled_url,
+                            sourceURL: data.url
+                        }
+                        resolve(gif);
+                        return;
                     } else {
                         reject(new Error(this.statusText));
                     }
                 };
-
-                xhr.open('GET', url);
                 xhr.send();
             }
         )
